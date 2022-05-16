@@ -13,6 +13,11 @@ get('/test') do
   erb(:whatever)
 end
 
+get('/') do
+  @albums = Album.all
+  erb(:albums)
+end
+
 get ('/albums') do
   @albums = Album.all
   erb(:albums)
@@ -24,7 +29,7 @@ end
 
 post('/albums') do
   name = params[:album_name]
-  album = Album.new(name, nil)
+  album = Album.new({ :name => name.capitalize, :id => nil})
   album.save()
   @albums = Album.all()
   erb(:albums)
@@ -32,7 +37,11 @@ end
 
 get('/albums/:id') do
   @album = Album.find(params[:id].to_i())
-  erb(:album)
+  if @album 
+    erb(:album)
+  else
+    erb(:error)
+  end
 end
 
 get('/albums/:id/edit') do 
@@ -56,14 +65,18 @@ end
 
 get('/albums/:id/songs/:song_id') do
   @song = Song.find(params[:song_id].to_i())
-  erb(:song)
+  if @song
+    erb(:song)
+  else
+    erb(:error)
+  end
 end
 
 post('/albums/:id/songs') do
-  @album = Album.find(params[:id].to_i())
-  song = Song.new(params[:song_name], @album.id, nil)
-  song.save()
-  erb(:album)
+   @album = Album.find(params[:id].to_i())
+   song = Song.new({:name => params[:song_name], :album_id => @album.id, :id => nil})
+   song.save()
+   erb(:album)
 end
 
 patch('/albums/:id/songs/:song_id') do
