@@ -92,3 +92,39 @@ delete('/albums/:id/songs/:song_id') do
   @album = Album.find(params[:id].to_i())
   erb(:album)
 end
+
+get('/artists') do
+  @artists = Artist.all
+  erb(:artists)
+end
+
+get('/artists/:id') do
+  @artist = Artist.find(params[:id].to_i())
+  if @artist 
+    erb(:artist)
+  else
+    erb(:error)
+  end
+end
+
+post('/artists') do
+  name = params[:artist_name]
+  artist = Artist.new({ :name => name.capitalize, :id => nil})
+  artist.save
+  @artists = Artist.all
+  erb(:artists)
+end
+
+patch('/artists/:id') do
+  @artist = Artist.find(params[:id].to_i())
+  @artist.update(params[:name])
+  @artist = Artist.all
+  erb(:artists)
+end
+
+delete('/artists/:id') do
+  @artist = Artist.find(params[:id].to_i())
+  @artist.delete()
+  @artists = Artist.all
+  erb(:artists)
+end
